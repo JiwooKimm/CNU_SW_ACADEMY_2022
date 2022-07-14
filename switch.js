@@ -3,7 +3,6 @@
 // console.log("2. Cafe Latte");
 // console.log("3. Cappucino");
 // console.log("4. Tea");
-
 // var choice = parseInt( prompt("메뉴 번호를 선택해 주세요 :)"));
 
 // console.log( choice + '번 메뉴를 선택하셨습니다.');
