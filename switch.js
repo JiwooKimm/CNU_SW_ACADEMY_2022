@@ -30,6 +30,8 @@
 
 
 
+
+
 var apple = parseInt( prompt("🍎!\n랜덤 사과 뽑기를 합니다. \n1번 부터 10번까지의 사과 중 선택하세요: )"));
 console.log(apple + '번 사과를 선택하셨습니다.');
 
