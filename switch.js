@@ -8,6 +8,7 @@
 // console.log( choice + '번 메뉴를 선택하셨습니다.');
 
 
+
 // switch(choice){
 // 	case 1:
 // 		console.log('아이스 아메리카노는 1,500원 입니다.');
