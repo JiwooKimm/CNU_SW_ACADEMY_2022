@@ -16,17 +16,27 @@
 # ## 파이썬의 HTML Parser, BeautifulSoup
 #
 # <br>
+# <img src="https://beautiful-soup-4.readthedocs.io/en/latest/_images/6.1.jpg" width="250" align="right">
+# <br>
 #
 # ### BeautifulSoup 🍲
-# 지난 실습의 `requests`를 이용하여 HTTP 요청을 보내고, 응답을 받아 요소를 살펴볼 수 있었다(Week4_1_HTTP_통신_코드).  
-# 그러나 `res.body`를 하였을 때 내용이 구분되지 않고 단순히 텍스트로만 응답이 와서 분석하기 쉽지 않았던 문데가 있었음!
-# <br>
+# 지난 실습의 `requests`를 이용하여 HTTP 요청을 보내고, 응답을 받아 요소를 살펴볼 수 있었다.  
+#
+# (Week4_1_HTTP_통신_코드)  
+#
+# 그러나 `res.body`를 하였을 때 내용이 구분되지 않고 단순히 텍스트로만 응답이 와서 분석하기 쉽지 않았던 문제가 있었음!  
+#
+#
 # 이때 **내가 원하는 요소만을 가져오기** 위하여 **HTML Parser**이용할 수 있다.  
+#
 # 그 중 가장 유명한 것이 `BeautifulSoup4`!  
-# <br><br>
-# <img src="https://beautiful-soup-4.readthedocs.io/en/latest/_images/6.1.jpg" width="300" align="left">
+#
 # <br><br><br><br>
-# <img src="https://daedalus-ldv.de/wp-content/uploads/2022/02/bs.png" width="300" align="center">
+#
+# <img src="https://daedalus-ldv.de/wp-content/uploads/2022/02/bs.png" width="250" align="right">
+#
+# <br><br><br><br>
+#
 #
 # <br><br>
 
