@@ -40,10 +40,10 @@
 #
 # ### 00-2. 전략:  
 # 1. CGV 무비차트에서 Top 3 영화에 들어가 
-# ![image-3.png](attachment:image-3.png)
+# ![image.png](attachment:image.png)
 #  
 #
-# ![image-2.png](attachment:image-2.png) 
+# ![image-2.png](attachment:image-2.png)
 #
 # 리뷰 스크래핑한다. 
 #
@@ -58,8 +58,7 @@
 #
 #      
 # 4. Top 1 부터 단어 스크래핑을 세 번 반복한다.  
-#
-#
+
 # ### 01. 라이브러리 불러오기 
 
 # +
@@ -74,6 +73,7 @@ from selenium.webdriver import ActionChains
 # Visualization 
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+import seaborn as sns
 
 # frequency
 from collections import Counter
@@ -144,6 +144,7 @@ for i in range(1,2): #TOP1 부터 3 까지 영화의 상세페이지 접근
 
 movie_chart= "http://www.cgv.co.kr/movies/?lt=1&ft=0"
 movie_path= '//*[@id="contents"]/div[1]/div[3]/ol[1]/li[{}]/div[2]/a/strong'
+
 
 with webdriver.Chrome(service= Service(ChromeDriverManager().install())) as driver:
     driver.get(movie_chart)
@@ -231,15 +232,16 @@ Top_movies
 
 # +
 page= '//*[@id="paging_point"]/li[{}]/a'
+next10= '//*[@id="paging_point"]/li[11]/button'
 
 start_page=1
-end_page=10
+end_page=20
 
 Top_movies={}
 
 with webdriver.Chrome(service= Service(ChromeDriverManager().install())) as driver:
     driver.get(movie_chart)
-    time.sleep(0.2)
+    time.sleep(0.3)
 
     for i in range(1,3+1): #TOP1 부터 3 까지 영화의 상세페이지 접근 
         movie_click= driver.find_element(By.XPATH, movie_path.format(i))
@@ -251,28 +253,44 @@ with webdriver.Chrome(service= Service(ChromeDriverManager().install())) as driv
         comments=[]
         
         for j in range(start_page,end_page+1): #리뷰 페이지 1~10페이지 스크랩 
-    
+                
             reviews= driver.find_elements(By.CLASS_NAME, "box-comment")
 
             for review in reviews:
-                comments.append(review.text)
-
+                comments.append(review.text)       
+            
+            
+#             print('page:{}'.format(j))
             if j != end_page:
-                next_page= driver.find_element(By.XPATH, page.format(j+1))
-                ActionChains(driver).click(next_page).perform()                 
-                
+                if j < 10 :
+                    next_page= driver.find_element(By.XPATH, page.format(j+1))
+                    ActionChains(driver).click(next_page).perform()                 
+
+                elif j%10 == 0 :
+                    next_page_btn= driver.find_element(By.XPATH, next10)
+                    ActionChains(driver).click(next_page_btn).perform()
+                    time.sleep(0.3)
+                else: # j>10
+                    next_page= driver.find_element(By.XPATH, page.format(j%10+3))
+                    ActionChains(driver).click(next_page).perform()   
+
             time.sleep(1)    
 
 
         Top_movies[this_movie]=comments
         driver.get(movie_chart)
-        time.sleep(0.4)
+        time.sleep(1)
 
 # Top_movies        
 # -
 
 #
 # 만세만세 잘 된다.🕺🏻💃🏻  
+#
+#
+# <img src="Week4_WeeklyMission_log02-3.GIF" width="500">
+#
+# <br><br>
 #
 # ### 03. 키워드 추출
 # #### 03-1. 단어 뽑기
@@ -285,29 +303,65 @@ for movie in Top_movies:
     theMovie= Top_movies[movie]
     words[movie] =[]
     for word in theMovie:
-        words[movie] += han.nouns(word)
+        if len(han.nouns(word)) > 1:  #종종 뽑히는 무의미한 단어, 조사, 등 필터링
+            words[movie] += han.nouns(word)
 
 # print(words)
 # -
 
+print(words)
+
 # #### 03-2. 추출 단어의 빈도수 
 
+# +
 keyword={}
-keyword10={}
+
 for movie in words:
     thewords= words[movie]
     keyword[movie]={}
-    keyword10[movie]={}
+
     for word in thewords:
         keyword[movie]= Counter(thewords)
-        keyword10[movie]= Counter(thewords).most_common(10)
-# print(keyword)
+
+# -
+
+# #### 03-2-1. 키워드 필터링
+
+# +
+
+exception_words=['미니언','미니언즈','한산','배우','배우들','비상선언','진짜','영화']
+
+for movie in keyword:
+    thekeyword= keyword[movie]
+
+    for key in thekeyword:
+        if len(key) <= 1: # 가끔 걸리는 조사, 무의미 단어 필터링
+            keyword[movie][key]=0
+            break
+        for e in exception_words:
+            if key == e:
+                keyword[movie][key]=0
+    
+# -
+
+# #### 03-2-2. 키워드 Top10
+
+keyword10={}
+for movie in keyword:
+    thekeyword= keyword[movie]
+    
+    keyword10[movie]={}
+    for word in thekeyword:
+        keyword10[movie]= Counter(thekeyword).most_common(10)
+print(keyword10)
 
 # ### 04. Word Cloud 생성
 
 # +
 from PIL import Image
 import numpy as np
+
+import matplotlib
 from matplotlib import rc 
 
 matplotlib.rcParams['font.family'] ='AppleGothic'
@@ -327,7 +381,7 @@ for movie in keyword:
 
 
     img= cloud.generate_from_frequencies(keyword[movie])
-    plt.title('Top{}. '.format(top) + movie)
+    plt.title('Top{}. '.format(top) + movie, fontsize=15)
     
     plt.axis("off")
 
@@ -336,8 +390,18 @@ for movie in keyword:
     top += 1
 # -
 
-# 생각보다 쓸 데 없는 단어 들이 많다.  
-#
-# 거를 수 있는 방안을 생각해 봐야 겠다.  
-#
-#
+import seaborn as sns
+x=[]
+y=[]
+rank=1
+for movie in keyword10:
+    for key in range(len(keyword10[movie])):
+        x.append(keyword10[movie][key][0])
+        y.append(keyword10[movie][key][1])
+    plt.figure(figsize=(13,3))
+    sns.barplot(x,y)
+    plt.title("Movie Rank Top{}. {}".format(rank, movie))
+    
+    x=[]
+    y=[]
+    rank +=1
