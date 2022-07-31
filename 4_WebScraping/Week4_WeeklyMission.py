@@ -309,8 +309,6 @@ for movie in Top_movies:
 # print(words)
 # -
 
-print(words)
-
 # #### 03-2. 추출 단어의 빈도수 
 
 # +
@@ -390,17 +388,29 @@ for movie in keyword:
     top += 1
 # -
 
-import seaborn as sns
+import time
+now= time.localtime()
+KST="%04d/%02d/%02d %02d:%02d" % (now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min)
+
+
+# +
+
 x=[]
 y=[]
 rank=1
+fig=plt.figure(figsize=(13,10))
+fig.suptitle("Keywords for Top 3 Movies", fontsize=15)
+fig.text(0.5,0.94,KST, va='center',ha='center')
 for movie in keyword10:
     for key in range(len(keyword10[movie])):
         x.append(keyword10[movie][key][0])
         y.append(keyword10[movie][key][1])
-    plt.figure(figsize=(13,3))
+    plt.subplot(3,1,rank)
+    plt.subplots_adjust(hspace = 0.3)
+    
     sns.barplot(x,y)
-    plt.title("Movie Rank Top{}. {}".format(rank, movie))
+    plt.title("Top{}. {}".format(rank, movie))
+#     plt.text(0,0,KST, horizontalalignment='right',verticalalignment='top',transform=ax.transAxes)
     
     x=[]
     y=[]
